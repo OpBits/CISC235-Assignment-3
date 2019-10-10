@@ -2,8 +2,6 @@
 
 import os
 
-#This class object is the node that holds the key and the corresponding val list.
-#This node also has the attributes to point to the left and right sub children
 class AVLNode(object):
     def __init__(self, key, val = None):
         self.key = key
@@ -13,29 +11,13 @@ class AVLNode(object):
             self.val = val
         self.left = None
         self.right = None
-
-'''
-This class represents the AVL tree data structure that contains the key-value pairs.
-The map is traversed via the key values, be it strings or integers. Then values can be
-added or extracted. The values are in list format, where they can hold strings or integers.
-'''
+        
 class AVLTreeMap(object):
-
-    #initializing the node attribute of the tree, where the node will point to
-    #child nodes from the previous class. Each node also holds the attribute of height
-    #and balance. Where height is the height value of each node, and the balance is
-    #the height comparison of the child nodes.
     def __init__(self):
         self.node = None
         self.height = 1
         self.balance = 0
 
-    '''
-    This function inserts a node with the key value pairing. This functon takes a key and
-    val as its parameters, where key can be a string or an int and the val is the value
-    to be put into a list. This function essentially creates a node if necessary and then
-    has the key and value added to it.
-    '''
     def put(self, key, val):
         if self.node is None:
             temp = [val]
@@ -69,10 +51,6 @@ class AVLTreeMap(object):
                 self.leftRotate()
                 self.setHeight()
  
-    '''
-    This function takes a node and sets the height of this node and all the child nodes.
-    If the node is empty, the nodes height is set to the default height.
-    '''
     def setHeight(self):
         if self.node:
             if self.node.left:
@@ -82,10 +60,7 @@ class AVLTreeMap(object):
             self.height = 1 + max(self.node.left.height, self.node.right.height)
         else:
             self.height = 1
-    '''
-    This function works similarily to the set heights fucntion, except that it
-    sets the balances for the node itself and all of its child nodes.
-    '''
+
     def setBalances(self):
         if self.node:
             if self.node.left:
@@ -96,10 +71,6 @@ class AVLTreeMap(object):
         else:
             self.balance = 0
     
-    '''
-    This function perfroms the left rotation, where the current root is replaced
-    by the right subtree
-    '''
     def leftRotate(self):
         root = self.node.right.node
         leftSubT = root.left.node
@@ -108,10 +79,7 @@ class AVLTreeMap(object):
         self.node = root
         oldRoot.right.node = leftSubT
         root.left.node = oldRoot
-    '''
-    This function perfroms the right rotation, where the current root is replaced
-    by the left subtree
-    '''
+        
     def rightRotate(self):
         root = self.node.left.node
         leftSubT = root.right.node
@@ -121,11 +89,6 @@ class AVLTreeMap(object):
         oldRoot.left.node = leftSubT
         root.right.node = oldRoot
 
-    '''
-    This function takes the key parameter, and has a preset parameter of keyList,
-    which is initialized to an empty list. This function returns a list of all the node
-    keys visited when search for a specific key. 
-    '''
     def searchPath(self, key, keyList = None):
         if keyList == None:
            keyList = []
@@ -148,11 +111,7 @@ class AVLTreeMap(object):
             else:
                 keyList.append(self.node.key)
                 return keyList
-    '''
-    This function has the key as the parameter. If the key exists in the AVL tree, then
-    the value corresponding to the key is returned. If the key does not exist, None is
-    returned.
-    '''
+            
     def get(self, key):
         if self.node is None:
             return None
@@ -168,10 +127,6 @@ class AVLTreeMap(object):
                 if self.node.right is None:
                     return None
                 return self.node.right.get(key)
-
-    '''
-    Prints the AVl Tree in Order
-    '''
     def printTree(self):
         if self.node is None:
             return
@@ -181,25 +136,12 @@ class AVLTreeMap(object):
         if self.node.right:
             self.node.right.printTree()
 
-'''
-THis class takes a web page(i.e. file) and then converts all the words in the file
-into an AVL tree. Each word is a seperate key in the tree and each index position of
-the word within the file is the array of indices.
-'''
 class WebPageIndex(object):
-    #This class initializes, by setting the filename attribute. Then sets attribute of
-    #contents, which is a list containing all the words within the file.
-    #Next, the last attribute is the AVLTree itself that holds all the key-value pairs
     def __init__(self, fileName):
         self.fileName = fileName
         self.contents = self.readFromFile(fileName)
         self.AVLTree = self.createWebIndexTree()
 
-    '''
-    This function takes the file name as its parameter. The function then creates a string
-    of the entire file and then converts it to a list of words. All the words are made lower
-    case and then the list is returned.
-    '''
     def readFromFile(self, fileName):
         with open(fileName, 'r+', encoding="utf-8") as file:
             listOfWords = file.read().replace('\n','')
@@ -213,12 +155,7 @@ class WebPageIndex(object):
         for i in range(len(listOfWords)):
             listOfWords[i] = listOfWords[i].lower()           
         return listOfWords
-
-    '''
-    This function creates the avl tree that contains each word as a key and holds its
-    associated value list that contains all the indices where the word can be found
-    in the file. The function returns the avltree as an attribute of the class object
-    '''
+    
     def createWebIndexTree(self):
         self.AVLTreeMap = AVLTreeMap()
         webIndex = self.contents
@@ -227,10 +164,6 @@ class WebPageIndex(object):
             self.AVLTreeMap.put(webIndex[i], i)
         return self.AVLTreeMap
 
-    '''
-    This function returns the amount of times the word appears within the web or file
-    that is passed through the parameter.
-    '''
     def Count(self, word):
         listOfIndices = self.AVLTree
         listOfIndices = listOfIndices.get(word)
@@ -242,19 +175,8 @@ class WebPageIndex(object):
         
     def getFileName(self):
         return self.fileName
-'''
-This class object creates a maxheap list that holds lists with two elements. The
-first element being the webpageindex instance and the other the priority value.
-The priority is the representation of the amount of times the query string shows up
-within the webpage. The max heap the sets the highest priority lists to the top, while
-the lowest priority to the bottom
-'''
+    
 class WebpagePriorityQueue(object):
-    '''
-    Initialize query, where query string is set to lower case. The other parameter
-    is the set of all webpageindex instances. I set an attribute to hold all the
-    original set webpages, while the other attribute to hold the maxheap itself.
-    '''
     def __init__(self, query, setOfWebInstances = None):
         self.query = query.lower()
         if setOfWebInstances == None:
@@ -264,10 +186,6 @@ class WebpagePriorityQueue(object):
             self.setOfOriginalInstances = setOfWebInstances
             self.maxHeap = self.createMaxHeap(setOfWebInstances, query)
 
-    '''
-    This function takes the set of web instances and the query. Then creates the max
-    heap which is then returned by the function.
-    '''
     def createMaxHeap(self, setOfWebInstances, query):
         tempList = []
         maxHeap = []
@@ -302,44 +220,20 @@ class WebpagePriorityQueue(object):
         
         return maxHeap
         
-    #This function takes no parameters. Only returns the top element of the max heap,
-    #which contains both the webpage instance and the priority number
     def peek(self):
         return self.maxHeap[0]
-        
-    #This function does the same as above, except it removes the top element of the max
-    #heap as well
+    
     def poll(self):
         topWebInstance = self.maxHeap[0]
         del (self.maxHeap[0])
         return topWebInstance
         
-    '''
-    This function takes a new query as a parameter and then rehashes the list
-    with the same set of webpage instances except re-prioritizes it based on the
-    new query.
-    '''
     def rehash(self, newQuery):
         if self.query != newQuery:
             self.query = newQuery.lower()
             self.maxHeap = self.createMaxHeap(self.setOfOriginalInstances, newQuery)
 
-'''
-Process queries is a class object that takes a folder of files that represent
-webpages. We then go through a list of queries and create the max heaps for the
-corresponding queries and webpages. This class' function then prints all the relevant
-pages corresponding to the query
-'''
 class ProcessQueries(object):
-    '''
-    First attribute is the specified limit, which is an int that determines
-    the amount of webpages to show at maximum. The next attribute creates a list
-    of all the webpage file names in webpageIndexList. The attribute webpageInstances
-    is the webpageIndex instances of all the files. Next attribute is the list
-    of all the queries from the queries text file. Last attribute is the
-    empty priority queue attribute that will be used to instantiate the
-    priority queue class.
-    '''
     def __init__(self, folderName, queryFileName, specifiedLimit = None):
         if specifiedLimit == None:
             self.specifiedLimit = None
